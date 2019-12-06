@@ -8,7 +8,7 @@ import {
 import createHistory from 'history/createBrowserHistory';
 import store from 'redux/store';
 import { ROOT } from 'configs/routeNames';
-import Home from 'components/UserDetails';
+import Dashboard from 'components/dashboard/Dashboard';
 import 'styles/App.css';
 
 const history = createHistory();
@@ -19,7 +19,7 @@ const App = () => (
       <Switch>
         <Route
           path={ROOT}
-          component={Home}
+          component={Dashboard}
         />
       </Switch>
     </Router>
