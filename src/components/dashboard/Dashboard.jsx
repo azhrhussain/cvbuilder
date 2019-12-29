@@ -4,8 +4,8 @@ import {
   Breadcrumb,
   Row,
   Col,
-  Button,
 } from 'antd';
+import { Link } from 'react-router-dom';
 
 const { Header, Content, Footer } = Layout;
 
@@ -22,15 +22,13 @@ class Dashboard extends Component {
           </Header>
           <Content style={{ padding: '0 50px', marginTop: 64 }}>
             <Breadcrumb style={{ margin: '16px 0' }}>
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
-              <Breadcrumb.Item>List</Breadcrumb.Item>
-              <Breadcrumb.Item>App</Breadcrumb.Item>
+              <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
             </Breadcrumb>
             <div style={{ background: '#fff', padding: 24, minHeight: 380 }}>
               <Row gutter={16}>
                 <Col className="gutter-row" span={6}>
                   <div className="gutter-box">
-                    <Button>Create New</Button>
+                    <Link className="ant-btn" to="/create-new">Create New CV</Link>
                   </div>
                 </Col>
               </Row>
