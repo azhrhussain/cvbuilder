@@ -2,6 +2,7 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/jsx-no-comment-textnodes */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Layout,
   Breadcrumb,
@@ -11,7 +12,7 @@ import {
 } from 'antd';
 import { Link } from 'react-router-dom';
 import ProfileCP from 'components/forms/profileInfo/Index';
-import ExperienceCP from 'components/forms/Experience';
+import ExperienceCP from 'components/forms/experience/Experience';
 import ProjectCP from 'components/forms/Project';
 import EducationCP from 'components/forms/Education';
 import CertificationCP from 'components/forms/Certification';
@@ -23,6 +24,7 @@ const { Header, Content, Footer } = Layout;
 
 class CreateNew extends Component {
   render() {
+    const { form } = this.props;
     return (
       <div className="main">
         <Layout>
@@ -39,11 +41,11 @@ class CreateNew extends Component {
               <Row gutter={16}>
                 <Col className="gutter-row" span={24}>
                   <Form layout="vertical">
-                    <ProfileCP />
+                    <ProfileCP form={form} />
                     <ExperienceCP />
                     <ProjectCP />
                     <Col className="gutter-row" span={24}>
-                      <h2 className="heading-secondary">Editional Project</h2>
+                      <h2 className="heading-secondary">Additional Projects</h2>
                     </Col>
                     <ProjectCP />
                     {/* copay same from project */}
@@ -63,6 +65,11 @@ class CreateNew extends Component {
   }
 }
 
-// const WrappedForm = Form.create({ name: 'create' })(CreateNew);
+CreateNew.propTypes = {
+  form: PropTypes.string.isRequired,
+};
 
-export default CreateNew;
+const WrappedForm = Form.create({ name: 'create' })(CreateNew);
+
+export default WrappedForm;
+// export default CreateNew;

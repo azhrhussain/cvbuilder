@@ -8,10 +8,15 @@ import {
 } from 'antd';
 
 const { TextArea } = Input;
+const addNewProject = () => {
+  console.log('clicked');
+};
+
 class Project extends Component {
   render() {
     // eslint-disable-next-line react/prop-types
     // const { form: { getFieldDecorator } } = this.props;
+
     return (
       <Fragment>
         {/* Project */}
@@ -19,7 +24,7 @@ class Project extends Component {
           <h2 className="heading-secondary">
             Project
             {' '}
-            <Button type="success">+ Add Project</Button>
+            <Button type="success" onClick={addNewProject}>+ Add Project</Button>
           </h2>
         </Col>
 

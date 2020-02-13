@@ -47,5 +47,6 @@ class ProfileInfo extends Component {
     );
   }
 }
-const WProfileInfo = Form.create({ name: 'create' })(ProfileInfo);
-export default WProfileInfo;
+// const WProfileInfo = Form.create({ name: 'create' })(ProfileInfo);
+// export default WProfileInfo;
+export default ProfileInfo;
