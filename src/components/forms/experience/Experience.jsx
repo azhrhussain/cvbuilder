@@ -5,6 +5,8 @@ import {
   // Input,
   Form,
   Button,
+  Card,
+  Icon,
   // Modal,
   // Checkbox,
   // DatePicker,
@@ -64,6 +66,10 @@ class Experiance extends Component {
     }));
   }
 
+  deleteExperience=(cname, i, e) => {
+    console.log(cname, i, e);
+  }
+
   render() {
     // eslint-disable-next-line react/prop-types
     // const { form: { getFieldDecorator } } = this.props;
@@ -79,17 +85,24 @@ class Experiance extends Component {
             <Button type="success" onClick={this.showModal}>+ Add Experience</Button>
           </h2>
           {experienceData.map(i => (
-            <div
-              key={i.companyName}
+            <Card
+              title={`${i.title}  -  ${i.companyName}`}
+              key={i.id}
+              id={i.id}
+              extra={(
+                <Fragment>
+                  <a href="#"><Icon type="edit" /></a>
+                  <a onClick={e => this.deleteExperience(i.companyName, i.id, e)} href="#"><Icon theme="twoTone" type="delete" /></a>
+                </Fragment>
+)}
             >
-              <div>{i.companyName}</div>
               <div>{i.companyLocation}</div>
               <div>{i.startDate}</div>
               {!i.currentlyWorking
-                ? [<div>{i.endDate}</div>] : null
+                ? [<div>{i.endDate}</div>] : 'currently working'
               }
               <div>{i.responsibilities}</div>
-            </div>
+            </Card>
           ))}
         </Col>
 

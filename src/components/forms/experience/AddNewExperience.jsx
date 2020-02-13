@@ -1,10 +1,11 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component, Fragment } from 'react';
 import propTypes from 'prop-types';
 import {
   Col,
   Input,
   Form,
-  Button,
+  // Button,
   Checkbox,
   Modal,
   DatePicker,
@@ -19,6 +20,8 @@ const initialStartDate = '2020/01';
 const initialEndDate = '2020/02';
 const initialState = {
   //   companyLogo: 'a',
+  id: '',
+  title: '',
   companyName: '',
   companyLocation: '',
   currentlyWorking: false,
@@ -37,6 +40,10 @@ handleExperienceChange = (e) => {
   this.setState({
     [e.target.name]: e.target.value,
   });
+  // if (e.target.name === 'companyName') {
+  //   const { startDate } = this.state;
+  //   this.setState({ id: `${e.target.value}_${startDate}` });
+  // }
 };
 
 currentlyWorking = (e) => {
@@ -52,9 +59,12 @@ handleDate = (elm, dateObj) => {
 }
 
 saveAndClearModal = () => {
+  const { companyName, startDate } = this.state;
+  // this.setState({ id: `${companyName}_${startDate}` }, (state) => { console.log(state); });
+  // console.log(this.state);
   const { onSave } = this.props;
-  onSave(this.state);
-  this.setState(initialState);
+  onSave({ ...this.state, id: `${companyName}_${startDate}` });
+  this.setState({ ...initialState });
 };
 
 cancelAndClearModal = () => {
@@ -66,10 +76,10 @@ cancelAndClearModal = () => {
 
 render() {
   const {
-    companyName, companyLocation, currentlyWorking, startDate, endDate, responsibilities,
+    title, companyName, companyLocation, currentlyWorking, startDate, endDate, responsibilities,
   } = this.state;
   const {
-    onSave, ExVisible, ExConfirmLoading,
+    ExVisible, ExConfirmLoading,
   } = this.props;
 
   return (
@@ -91,6 +101,11 @@ render() {
         </Col>
         <Col className="gutter-row" span={20}>
           <Col className="gutter-row" span={12}>
+            <Form.Item label="Title">
+              <Input onChange={this.handleExperienceChange} name="title" value={title} placeholder="Ex: Front End Engineer" id="" />
+            </Form.Item>
+          </Col>
+          <Col className="gutter-row" span={12}>
             <Form.Item label="Company">
               <Input onChange={this.handleExperienceChange} name="companyName" value={companyName} placeholder="Company" id="" />
             </Form.Item>
@@ -102,7 +117,7 @@ render() {
           </Col>
           <Col className="gutter-row pad-label" span={12}>
             <Form.Item>
-              <Checkbox onChange={this.currentlyWorking} defaultChecked={false}>Currently working</Checkbox>
+              <Checkbox onChange={this.currentlyWorking} checked={currentlyWorking}>Currently working</Checkbox>
             </Form.Item>
           </Col>
           <Col className="gutter-row" span={6}>
@@ -142,8 +157,6 @@ render() {
                 autoSize={{ minRows: 3, maxRows: 5 }}
               />
             </Form.Item>
-
-            <Button onClick={() => onSave(this.state)} type="primary">save data</Button>
           </Col>
         </Col>
       </Modal>
