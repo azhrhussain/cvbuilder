@@ -20,6 +20,19 @@ import AddNewExperience from 'components/forms/experience/AddNewExperience';
 
 // const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
 // const { TextArea } = Input;
+const initialStartDate = '2020-12';
+const initialEndDate = '2020-02';
+const initialState = {
+  companyLogo: '',
+  id: '',
+  title: '',
+  companyName: '',
+  companyLocation: '',
+  currentlyWorking: false,
+  startDate: initialStartDate,
+  endDate: initialEndDate,
+  responsibilities: '',
+};
 
 class Experiance extends Component {
   constructor(props) {
@@ -27,11 +40,15 @@ class Experiance extends Component {
     this.state = {
       visible: false,
       confirmLoading: false,
+      updateIndex: 0,
+      isUpdate: false,
+      updateData: initialState,
       experienceData: [],
     };
   }
 
   showModal = () => {
+    console.log('#####');
     this.setState({
       visible: true,
     });
@@ -66,59 +83,80 @@ class Experiance extends Component {
     }));
   }
 
-  deleteExperience=(cname, i, e) => {
-    console.log(cname, i, e);
+  deleteExperience=(id) => {
+    const { experienceData } = this.state;
+    const filteredExperience = experienceData.filter(
+      item => item.id !== id,
+    );
+    this.setState({
+      experienceData: filteredExperience,
+    });
+  }
+
+  editExperience=(id, index) => {
+    const { experienceData } = this.state;
+    const tempUpdateItem = experienceData[index];
+    console.log(id, index, experienceData, tempUpdateItem);
+    this.setState({
+      updateData: tempUpdateItem,
+      updateIndex: index,
+      isUpdate: true,
+    }, () => {
+      this.showModal();
+    });
+  }
+
+  updateExperience=(data) => {
+    const { updateIndex, experienceData } = this.state;
+    const temp = experienceData.splice(updateIndex, 1, data);
+    this.setState(prevState => ({
+      experienceData: [...prevState.experienceData, temp],
+      isUpdate: false,
+      visible: false,
+      updateIndex: 0,
+      updateData: [],
+    }), statw => console.log(statw));
   }
 
   render() {
     // eslint-disable-next-line react/prop-types
     // const { form: { getFieldDecorator } } = this.props;
-    const { experienceData, visible, confirmLoading } = this.state;
+    const {
+      experienceData, visible, confirmLoading, isUpdate, updateData,
+    } = this.state;
     return (
       <Fragment>
         {/* Experience */}
 
         <Col className="gutter-row" span={24}>
           <h2 className="heading-secondary">
+            {isUpdate ? 'IsUpdat: true' : 'false'}
             Experience
             {' '}
             <Button type="success" onClick={this.showModal}>+ Add Experience</Button>
           </h2>
-          {experienceData.map(i => (
+          {experienceData.map((item, index) => (
             <Card
-              title={`${i.title}  -  ${i.companyName}`}
-              key={i.id}
-              id={i.id}
+              title={`${item.title}  -  ${item.companyName}`}
+              key={item.id}
+              id={item.id}
               extra={(
                 <Fragment>
-                  <a href="#"><Icon type="edit" /></a>
-                  <a onClick={e => this.deleteExperience(i.companyName, i.id, e)} href="#"><Icon theme="twoTone" type="delete" /></a>
+                  <Button type="primary" shape="circle" onClick={() => this.editExperience(item.id, index)}><Icon type="edit" /></Button>
+                  {' '}
+                  <Button type="danger" shape="circle" onClick={() => this.deleteExperience(item.id)}><Icon type="delete" /></Button>
                 </Fragment>
 )}
             >
-              <div>{i.companyLocation}</div>
-              <div>{i.startDate}</div>
-              {!i.currentlyWorking
-                ? [<div>{i.endDate}</div>] : 'currently working'
+              <div>{item.companyLocation}</div>
+              <div>{item.startDate}</div>
+              {!item.currentlyWorking
+                ? [<div>{item.endDate}</div>] : 'currently working'
               }
-              <div>{i.responsibilities}</div>
+              <div>{item.responsibilities}</div>
             </Card>
           ))}
         </Col>
-
-
-        {/* <Modal
-          title="Add Experiance"
-          visible={visible}
-          onOk={this.handleOk}
-          okText="Save"
-          confirmLoading={confirmLoading}
-          onCancel={this.handleCancel}
-          width="60%"
-        >
-          <AddNewExperience onSave={this.saveExp} />
-        </Modal> */}
-
 
         <AddNewExperience
           ExVisible={visible}
@@ -126,8 +164,11 @@ class Experiance extends Component {
           ExOnOk={this.handleOk}
           ExHandleCancle={this.handleCancel}
           onSave={this.saveExp}
+          onUpdate={this.updateExperience}
+          updateData={updateData}
+          // updateIndex={updateIndex}
+          // isUpdate={isUpdate}
         />
-
 
       </Fragment>
     );
