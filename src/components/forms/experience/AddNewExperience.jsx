@@ -1,5 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
-import React, { Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import propTypes from 'prop-types';
 import {
   Col,
@@ -16,37 +16,116 @@ import moment from 'moment';
 const monthFormat = 'YYYY-MM';
 const { TextArea } = Input;
 const { MonthPicker } = DatePicker;
+const initialStartDate = '2020-01';
+const initialEndDate = '2020-02';
+const initialState = {
+  companyLogo: '',
+  id: '',
+  title: '',
+  companyName: '',
+  companyLocation: '',
+  currentlyWorking: false,
+  startDate: initialStartDate,
+  endDate: initialEndDate,
+  responsibilities: '',
+};
+class AddNewExperience extends Component {
+  constructor(props) {
+    super(props);
+    this.state = initialState;
+    this.handleExperienceChange = this.handleExperienceChange.bind(this);
+  }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.isUpdate) {
+      const propUpdatePrevData = nextProps.updateData[0];
+      this.setState({
+        id: propUpdatePrevData.id,
+        title: propUpdatePrevData.title,
+        companyName: propUpdatePrevData.companyName,
+        companyLocation: propUpdatePrevData.companyLocation,
+        currentlyWorking: propUpdatePrevData.currentlyWorking,
+        startDate: propUpdatePrevData.startDate,
+        endDate: propUpdatePrevData.endDate,
+        responsibilities: propUpdatePrevData.responsibilities,
+      });
+    }
+  }
+  // componentDidUpdate(prevProps, prevState){
+  //   console.log(prevProps, prevState)
+  // }
 
-// class AddNewExperience extends Component {
-//   constructor(props) {
-//     super(props);
-//     const { updateData } = props;
-//     console.log('updatedata:', updateData);
-//     props.state = updateData || initialState;
-//     props.handleExperienceChange = props.handleExperienceChange.bind(this);
-//   }
+handleExperienceChange = (e) => {
+  this.setState({
+    [e.target.name]: e.target.value,
+  });
+  // if (e.target.name === 'companyName') {
+  //   const { startDate } = this.state;
+  //   this.setState({ id: `${e.target.value}_${startDate}` });
+  // }
+};
 
-const AddNewExperience = (props) => {
+currentlyWorking = (e) => {
+  this.setState({
+    currentlyWorking: e.target.checked,
+  });
+}
+
+handleDate = (elm, dateObj, date) => {
+  if (dateObj !== null) {
+    if (elm === 'startDate') { this.setState({ startDate: date }); } else this.setState({ endDate: date });
+  } else if (elm === 'startDate') { this.setState({ startDate: initialStartDate }); } else this.setState({ endDate: initialEndDate });
+}
+
+saveAndClearModal = () => {
+  const { id } = this.state;
+  // this.setState({ id: `${companyName}_${startDate}` }, (state) => { console.log(state); });
+  // console.log(this.state);
   const {
-    updateData, ExVisible, handleExperienceChange,
-  } = props;
+    onSave, onUpdate, isUpdate, updateIndex,
+  } = this.props;
+  console.log(isUpdate, onUpdate, updateIndex);
+  if (isUpdate) {
+    onUpdate({ ...this.state, id });
+  } else {
+    const dateTime = new Date();
+    const dynamicId = `${'exper'}_${dateTime.getDate()}_${dateTime.getMonth()}_${dateTime.getFullYear()}_${dateTime.getTime()}`;
+    onSave({ ...this.state, id: dynamicId });
+  }
+  this.setState({ ...initialState });
+};
 
+cancelAndClearModal = () => {
+  const { ExHandleCancle } = this.props;
+  this.setState(initialState);
+  ExHandleCancle();
+}
+
+handleChangeDate = (elm, dateObj) => {
+  if (dateObj !== null) {
+    if (elm === 'startDate') { this.setState({ startDate: dateObj }); } else this.setState({ endDate: dateObj });
+  } else if (elm === 'startDate') { this.setState({ startDate: initialStartDate }); } else this.setState({ endDate: initialEndDate });
+};
+
+
+render() {
   const {
     title, companyName, companyLocation, currentlyWorking, startDate, endDate, responsibilities,
-  } = updateData;
+  } = this.state;
+  const {
+    ExVisible, ExConfirmLoading,
+  } = this.props;
+
   return (
     <Fragment>
       <Modal
         title="Add Experiance"
         visible={ExVisible}
-        // onOk={props.saveAndClearModal}
-        onOk={props.saveAndClearModal}
+        onOk={this.saveAndClearModal}
         okText="Save"
-        confirmLoading={props.ExConfirmLoading}
-        onCancel={props.ExHandleCancle}
+        confirmLoading={ExConfirmLoading}
+        onCancel={this.cancelAndClearModal}
         width="60%"
-        // onUpdateData={props.onUpdateDataRec(updateData)}
       >
 
         <Col className="gutter-row" span={4}>
@@ -57,29 +136,29 @@ const AddNewExperience = (props) => {
         <Col className="gutter-row" span={20}>
           <Col className="gutter-row" span={12}>
             <Form.Item label="Title">
-              <Input onChange={handleExperienceChange} name="title" value={title} placeholder="Ex: Front End Engineer" id="" />
+              <Input onChange={this.handleExperienceChange} name="title" value={title} placeholder="Ex: Front End Engineer" id="" />
             </Form.Item>
           </Col>
           <Col className="gutter-row" span={12}>
             <Form.Item label="Company">
-              <Input onChange={props.handleExperienceChange} name="companyName" value={companyName} placeholder="Company" id="" />
+              <Input onChange={this.handleExperienceChange} name="companyName" value={companyName} placeholder="Company" id="" />
             </Form.Item>
           </Col>
           <Col className="gutter-row" span={12}>
             <Form.Item label="Company location">
-              <Input onChange={props.handleExperienceChange} name="companyLocation" value={companyLocation} placeholder="i.e: Lahore" id="" />
+              <Input onChange={this.handleExperienceChange} name="companyLocation" value={companyLocation} placeholder="i.e: Lahore" id="" />
             </Form.Item>
           </Col>
           <Col className="gutter-row pad-label" span={12}>
             <Form.Item>
-              <Checkbox onChange={props.currentlyWorking} checked={currentlyWorking}>Currently working</Checkbox>
+              <Checkbox onChange={this.currentlyWorking} checked={currentlyWorking}>Currently working</Checkbox>
             </Form.Item>
           </Col>
           <Col className="gutter-row" span={6}>
             <Form.Item label="Started Date">
               {/* eslint max-len: ["error", { "code": 280 }] */}
               <MonthPicker
-                onChange={(elm, date) => props.handleDate('startDate', elm, date)}
+                onChange={(elm, date) => this.handleDate('startDate', elm, date)}
                 format={monthFormat}
                 value={moment(startDate, monthFormat)}
                 name="startDate"
@@ -92,7 +171,7 @@ const AddNewExperience = (props) => {
                 <Form.Item label="End Date">
                   {/* eslint max-len: ["error", { "code": 180 }] */}
                   <MonthPicker
-                    onChange={(elm, date) => props.handleDate('endDate', elm, date)}
+                    onChange={(elm, date) => this.handleDate('endDate', elm, date)}
                     format={monthFormat}
                     value={moment(endDate, monthFormat)}
                     name="endDate"
@@ -105,7 +184,7 @@ const AddNewExperience = (props) => {
             <Form.Item label="Responsibilities">
               <TextArea
               // value={value}
-                onChange={props.handleExperienceChange}
+                onChange={this.handleExperienceChange}
                 name="responsibilities"
                 value={responsibilities}
                 placeholder="Responsibilities"
@@ -117,18 +196,19 @@ const AddNewExperience = (props) => {
       </Modal>
     </Fragment>
   );
-};
+}
+}
+
 AddNewExperience.propTypes = {
-  ExVisible: propTypes.bool.isRequired,
-  // onSave: propTypes.func.isRequired,
-  ExConfirmLoading: propTypes.bool.isRequired,
-  saveAndClearModal: propTypes.func.isRequired,
-  ExHandleCancle: propTypes.func.isRequired,
+  onSave: propTypes.func.isRequired,
+  onUpdate: propTypes.func.isRequired,
+  isUpdate: propTypes.bool.isRequired,
   updateData: propTypes.objectOf.isRequired,
-  handleExperienceChange: propTypes.func.isRequired,
-  currentlyWorking: propTypes.func.isRequired,
-  handleDate: propTypes.func.isRequired,
-  // isUpdate: propTypes.bool.isRequired,
+  updateIndex: propTypes.number.isRequired,
+  // ExOnOk: propTypes.func.isRequired,
+  ExVisible: propTypes.bool.isRequired,
+  ExHandleCancle: propTypes.func.isRequired,
+  ExConfirmLoading: propTypes.bool.isRequired,
 };
 
 export default AddNewExperience;

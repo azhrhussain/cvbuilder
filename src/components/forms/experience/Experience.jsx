@@ -20,19 +20,6 @@ import AddNewExperience from 'components/forms/experience/AddNewExperience';
 
 // const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
 // const { TextArea } = Input;
-const initialStartDate = '2020-12';
-const initialEndDate = '2020-02';
-const initialState = {
-  companyLogo: '',
-  id: '',
-  title: '',
-  companyName: '',
-  companyLocation: '',
-  currentlyWorking: false,
-  startDate: initialStartDate,
-  endDate: initialEndDate,
-  responsibilities: '',
-};
 
 class Experiance extends Component {
   constructor(props) {
@@ -42,8 +29,7 @@ class Experiance extends Component {
       confirmLoading: false,
       updateIndex: 0,
       isUpdate: false,
-      updateData: initialState,
-      tempExpData: initialState,
+      updateData: [],
       experienceData: [],
     };
   }
@@ -51,6 +37,9 @@ class Experiance extends Component {
   showModal = () => {
     this.setState({
       visible: true,
+      isUpdate: false,
+      updateData: [],
+      updateIndex: 0,
     });
   };
 
@@ -72,6 +61,8 @@ class Experiance extends Component {
     console.log('Clicked cancel button');
     this.setState({
       visible: false,
+      isUpdate: false,
+      updateData: [],
     });
   };
 
@@ -98,103 +89,32 @@ class Experiance extends Component {
     const tempUpdateItem = experienceData[index];
     console.log(id, index, experienceData, tempUpdateItem);
     this.setState({
-      updateData: tempUpdateItem,
+      updateData: [tempUpdateItem],
       updateIndex: index,
       isUpdate: true,
-    }, () => {
-      this.showModal();
+      visible: true,
     });
+    // this.showModal();
   }
 
   updateExperience=(data) => {
     const { updateIndex, experienceData } = this.state;
     const temp = experienceData.splice(updateIndex, 1, data);
     this.setState(prevState => ({
-      experienceData: [...prevState.experienceData, temp],
+      experienceData: prevState.experienceData,
       isUpdate: false,
       visible: false,
       updateIndex: 0,
       updateData: [],
-    }), statw => console.log(statw));
-  }
-
-  // pure component functions copy
-  handleExperienceChange = ({ target: { value } }) => {
-    const { tempExpData } = this.state;
-    // const newName = [e.target.name];
-    console.log(value);
-    console.log(this.updateData);
-    this.setState(prevState => ({
-      updateData: { ...prevState.updateData, newName: value },
     }));
-    // if (!isUpdate) {
-
-    // }
-  };
-
-  currentlyWorking = (e) => {
-    console.log(e);
-    // this.setState({
-    //   currentlyWorking: e.target.checked,
-    // });
+    console.log(data, updateIndex, experienceData, temp);
   }
-
-  handleDate = (elm, dateObj, date) => {
-    console.log(elm, dateObj, date);
-    // if (dateObj !== null) {
-    // if (elm === 'startDate') { this.setState({ startDate: date }); }
-    // else this.setState({ endDate: date });
-    // } else if (elm === 'startDate') { this.setState({ startDate: initialStartDate }); }
-    // else this.setState({ endDate: initialEndDate });
-  }
-
-  saveAndClearModal = () => {
-    // const { companyName, startDate } = this.state;
-    // this.setState({ id: `${companyName}_${startDate}` }, (state) => { console.log(state); });
-    // console.log(this.state);
-    // const { onSave } = this.props;
-    // const {
-    //   onSave, onUpdate, isUpdate, updateIndex,
-    // } = this.props;
-    // console.log(isUpdate, onUpdate, updateIndex);
-    // if (isUpdate) {
-    //   onUpdate({ ...this.state, id: `${companyName}_${startDate}` });
-    // } else {
-    //   onSave({ ...this.state, id: `${companyName}_${startDate}` });
-    // }
-
-    // onSave({ ...this.state, id: `${companyName}_${startDate}` });
-    this.setState({ ...initialState });
-  };
-
-  // cancelAndClearModal = () => {
-  //   const { ExHandleCancle } = this.props;
-  //   this.setState(initialState);
-  //   ExHandleCancle();
-  // }
-
-  handleChangeDate = (elm, dateObj) => {
-    console.log(elm, dateObj);
-    // if (dateObj !== null) {
-    //   if (elm === 'startDate') { this.setState({ startDate: dateObj }); }
-    // else this.setState({ endDate: dateObj });
-    // } else if (elm === 'startDate') { this.setState({ startDate: initialStartDate }); }
-    // else this.setState({ endDate: initialEndDate });
-  };
-
-  // onUpdateDataRec=(data) => {
-  //   if (data !== undefined) {
-  //     this.setState({ data });
-  //   }
-  //   // console.log('received data:', data);
-  // }
-  // end pure component functions copy
 
   render() {
     // eslint-disable-next-line react/prop-types
     // const { form: { getFieldDecorator } } = this.props;
     const {
-      experienceData, visible, confirmLoading, isUpdate, updateData,
+      experienceData, visible, confirmLoading, isUpdate, updateData, updateIndex,
     } = this.state;
     return (
       <Fragment>
@@ -202,7 +122,6 @@ class Experiance extends Component {
 
         <Col className="gutter-row" span={24}>
           <h2 className="heading-secondary">
-            {isUpdate ? 'IsUpdat: true' : 'false'}
             Experience
             {' '}
             <Button type="success" onClick={this.showModal}>+ Add Experience</Button>
@@ -233,16 +152,12 @@ class Experiance extends Component {
         <AddNewExperience
           ExVisible={visible}
           ExConfirmLoading={confirmLoading}
-          // ExOnOk={this.handleOk}
-          ExOnOk={this.saveAndClearModal}
+          ExOnOk={this.handleOk}
           ExHandleCancle={this.handleCancel}
-          handleExperienceChange={this.handleExperienceChange}
-          currentlyWorking={this.currentlyWorking}
-          // onSave={this.saveExp}
+          onSave={this.saveExp}
           onUpdate={this.updateExperience}
           updateData={updateData}
-          handleDate={this.handleDate}
-          // updateIndex={updateIndex}
+          updateIndex={updateIndex}
           isUpdate={isUpdate}
         />
 
